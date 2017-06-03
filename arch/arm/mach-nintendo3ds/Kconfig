@@ -1,0 +1,41 @@
+menu "Nintendo 3DS model type"
+	depends on ARCH_NINTENDO3DS
+
+config NINTENDO3DS_DT
+	bool "Support Nintendo 3DS Device Tree based boot"
+	select ARM_GIC
+	select USE_OF
+	select ARCH_REQUIRE_GPIOLIB
+	select PINCTRL
+	help
+	  Include support for booting the Nintendo 3DS
+	  using a device tree machine description.
+
+config MACH_NINTENDO3DS_CTR
+	bool "Old Nintendo 3DS (CTR)"
+
+config MACH_NINTENDO3DS_SPR
+	bool "Old Nintendo 3DS XL/LL (SPR)"
+
+config MACH_NINTENDO3DS_FTR
+	bool "Nintendo 2DS (FTR)"
+
+config MACH_NINTENDO3DS_KTR
+	bool "New Nintendo 3DS (KTR)"
+
+config MACH_NINTENDO3DS_RED
+	bool "New Nintendo 3DS XL/LL (RED)"
+
+menu "Nintendo 3DS Specific Features"
+
+config NINTENDO3DS_PXI
+	bool "Enable the PXI inter-processor protocol"
+	depends on ARCH_NINTENDO3DS
+	default y
+	help
+	  Use the PXI interface to communicate with the ARM9
+	  processor.
+
+endmenu
+
+endmenu
