@@ -62,6 +62,18 @@
 		};
 	};
 
+	mmc3: mmc@10122000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		non-removable;
+		status = "okay";
+
+		ath6kl: ath6kl@1 {
+			compatible = "atheros,ath6kl";
+			atheros,board-id = "SD32";
+		};
+	};
+
 	n3ds_input0: input@10146000 {
 		compatible = "nintendo3ds-input";
 	};
@@ -102,6 +114,11 @@
 		#size-cells = <0>;
 		compatible = "nintendo3ds,nintendo3ds-i2c";
 		reg = <0x10148000 0x06>;
+
+		sc16is750: sc16is750@9a {
+			compatible = "nxp,sc16is750";
+			reg = <0x9a>;
+		};
 	};
 
 	spi0: spi@10160000 {
