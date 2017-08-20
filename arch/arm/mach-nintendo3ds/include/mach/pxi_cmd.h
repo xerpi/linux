@@ -14,6 +14,8 @@
 #define PXI_CMD_NONE			0
 #define PXI_CMD_PING			1
 #define PXI_CMD_SDMMC_READ_SECTOR	2
+#define PXI_CMD_SDMMC_WRITE_SECTOR  3
+#define PXI_CMD_SDMMC_GET_SIZE      4
 
 struct pxi_cmd_hdr {
 	struct {
@@ -27,6 +29,17 @@ struct pxi_cmd_sdmmc_read_sector {
 	struct pxi_cmd_hdr header;
 	u32 sector;
 	u32 paddr;
+} __attribute__((packed));
+
+struct pxi_cmd_sdmmc_write_sector {
+    struct pxi_cmd_hdr header;
+    u32 sector;
+    u32 paddr;
+} __attribute__((packed));
+
+struct pxi_resp_sdmmc_get_size {
+    struct pxi_cmd_hdr header;
+    u32 size;
 } __attribute__((packed));
 
 #endif

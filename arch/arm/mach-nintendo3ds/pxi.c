@@ -81,11 +81,56 @@ static void pxi_reset(void)
 	PXI_REG_WRITE(PXI_REG_SYNC11_OFFSET, PXI_SYNC_IRQ_ENABLE);
 }
 
+static void pxi_recv_cmd_hdr(struct pxi_cmd_hdr *cmd)
+{
+	*(u32 *)cmd = pxi_recv_fifo_pop();
+}
+
+static void pxi_recv_buffer(void *data, u32 size)
+{
+	u32 i;
+
+	for (i = 0; i < size; i+=4) {
+		while (pxi_recv_fifo_is_empty())
+			;
+		((u32 *)data)[i/4] = pxi_recv_fifo_pop();
+	}
+}
+
+static u32 disk_size=0;
 static irqreturn_t sync_irq_handler(int irq, void *dummy)
 {
 	printk("GOT IRQ: %d\n", irq);
+
+    if(pxi_recv_fifo_is_empty())
+        return IRQ_HANDLED;
+
+    mutex_lock(&pxi_lock);
+
+    struct pxi_resp_sdmmc_get_size cmd;
+
+    pxi_recv_cmd_hdr((struct pxi_cmd_hdr *)&cmd);
+
+    if(cmd.header.cmd != PXI_CMD_SDMMC_GET_SIZE) {
+        mutex_unlock(&pxi_lock);
+        return IRQ_HANDLED;
+    }
+    pxi_recv_buffer(&(cmd.header.data), cmd.header.len);
+    printk("GOT SD size: %d\n", cmd.size);
+    disk_size=cmd.size;
+
+    mutex_unlock(&pxi_lock);
+
 	return IRQ_HANDLED;
 }
+
+u32 pxi_get_sdmmc_size(void) {
+    mutex_lock(&pxi_lock);
+    u32 ds = disk_size;
+    mutex_unlock(&pxi_lock);
+    return ds;
+}
+EXPORT_SYMBOL(pxi_get_sdmmc_size);
 
 void pxi_send_cmd(struct pxi_cmd_hdr *cmd)
 {
@@ -120,6 +165,8 @@ void pxi_send_cmd(struct pxi_cmd_hdr *cmd)
 	mutex_unlock(&pxi_lock);
 }
 EXPORT_SYMBOL(pxi_send_cmd);
+
+
 
 static int __init pxi_init(void)
 {

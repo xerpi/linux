@@ -54,8 +54,18 @@ struct nintendo3ds_mmc {
 static void nintendo3ds_pxi_mmc_write_sectors(struct nintendo3ds_mmc *mmc,
 	sector_t sector_off, u8 *buffer, unsigned int sectors)
 {
-	/*memcpy(dev_data + sector_off * NINTENDO3DS_MMC_BLOCKSIZE, buffer,
-		sectors * NINTENDO3DS_MMC_BLOCKSIZE);*/
+    unsigned int i;
+
+    for (i = 0; i < sectors; i++) {
+        struct pxi_cmd_sdmmc_write_sector cmd = {
+            .header.cmd = PXI_CMD_SDMMC_WRITE_SECTOR,
+            .header.len = sizeof(cmd) - sizeof(struct pxi_cmd_hdr),
+            .sector = sector_off + i,
+            .paddr = (u32)virt_to_phys(buffer + i * NINTENDO3DS_MMC_BLOCKSIZE)
+        };
+
+        pxi_send_cmd((struct pxi_cmd_hdr *)&cmd);
+    }
 }
 
 static void nintendo3ds_pxi_mmc_read_sectors(struct nintendo3ds_mmc *mmc,
@@ -196,8 +206,15 @@ static int nintendo3ds_mmc_probe(struct platform_device *pdev)
 	mmc->disk->queue = mmc->queue;
 	sprintf(mmc->disk->disk_name, "nintendo3ds_mmc");
 
-	//mmc->size = pxi_...
-	mmc->size = 31586304; /* 16GB SD card */
+    struxt pxi_cmd_hdr *size_cmd;
+    size_cmd.cmd = PXI_CMD_SDMMC_GET_SIZE;
+    size_cmd.size = 0;
+
+    pxi_send_cmd(&size_cmd);
+
+	mmc->size = 0;
+    while(mmc->size == 0)
+        mmc->size = pxi_get_sdmmc_size();
 
 	platform_set_drvdata(pdev, mmc);
 

@@ -37,5 +37,6 @@
 #define PXI_SYNC_IRQ_ENABLE		(1 << 31)
 
 void pxi_send_cmd(struct pxi_cmd_hdr *cmd);
+unsigned int pxi_get_sdmmc_size(void);
 
 #endif
