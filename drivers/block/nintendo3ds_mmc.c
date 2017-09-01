@@ -174,11 +174,6 @@ static int nintendo3ds_mmc_probe(struct platform_device *pdev)
 	struct nintendo3ds_mmc *mmc;
 	struct pxi_cmd_hdr size_cmd;
 
-	if(!pxi_is_active())
-	{
-		return -EPROBE_DEFER;
-	}
-
 	mmc = kzalloc(sizeof(*mmc), GFP_KERNEL);
 	if (!mmc)
 		return -ENOMEM;

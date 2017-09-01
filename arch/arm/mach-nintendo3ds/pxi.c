@@ -18,13 +18,6 @@
 #include <mach/platform.h>
 #include <mach/pxi.h>
 
-static int _pxi_is_active = 0;
-
-int pxi_is_active(void)
-{
-	return _pxi_is_active;
-}
-
 static u8 __iomem *pxi_base = NULL;
 static DEFINE_MUTEX(pxi_lock);
 
@@ -214,8 +207,6 @@ static int nintendo3ds_pxi_probe(struct platform_device *pdev)
 
 		pxi_send_cmd((struct pxi_cmd_hdr *)&cmd);
 	}*/
-
-	_pxi_is_active = 1;
 
 	return 0;
 }
