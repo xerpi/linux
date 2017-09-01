@@ -36,7 +36,7 @@
 #define PXI_SYNC_TRIGGER_PXI_SYNC9	(1 << 30)
 #define PXI_SYNC_IRQ_ENABLE		(1 << 31)
 
-void pxi_send_cmd(struct pxi_cmd_hdr *cmd);
+void pxi_send_cmd(struct pxi_cmd_hdr *cmd, int wait);
 unsigned int pxi_get_sdmmc_size(void);
-
+int pxi_is_active(void);
 #endif

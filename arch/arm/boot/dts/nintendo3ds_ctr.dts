@@ -227,4 +227,10 @@
 			#dma-requests = <32>;
 		};
 	};
+
+	pxi {
+		compatible = "nintendo3ds,nintendo3ds-pxi";
+		interrupts = <GIC_SPI 0x30 IRQ_TYPE_EDGE_RISING>;
+		interrupt-parent = <&gic>;
+	};
 };

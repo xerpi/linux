@@ -64,7 +64,7 @@ static void nintendo3ds_pxi_mmc_write_sectors(struct nintendo3ds_mmc *mmc,
             .paddr = (u32)virt_to_phys(buffer + i * NINTENDO3DS_MMC_BLOCKSIZE)
         };
 
-        pxi_send_cmd((struct pxi_cmd_hdr *)&cmd);
+        pxi_send_cmd((struct pxi_cmd_hdr *)&cmd, 1 /* wait for response */);
     }
 }
 
@@ -81,7 +81,7 @@ static void nintendo3ds_pxi_mmc_read_sectors(struct nintendo3ds_mmc *mmc,
 			.paddr = (u32)virt_to_phys(buffer + i * NINTENDO3DS_MMC_BLOCKSIZE)
 		};
 
-		pxi_send_cmd((struct pxi_cmd_hdr *)&cmd);
+		pxi_send_cmd((struct pxi_cmd_hdr *)&cmd, 1 /* wait for response */);
 	}
 }
 
@@ -172,6 +172,12 @@ static int nintendo3ds_mmc_probe(struct platform_device *pdev)
 {
 	int error;
 	struct nintendo3ds_mmc *mmc;
+	struct pxi_cmd_hdr size_cmd;
+
+	if(!pxi_is_active())
+	{
+		return -EPROBE_DEFER;
+	}
 
 	mmc = kzalloc(sizeof(*mmc), GFP_KERNEL);
 	if (!mmc)
@@ -206,15 +212,14 @@ static int nintendo3ds_mmc_probe(struct platform_device *pdev)
 	mmc->disk->queue = mmc->queue;
 	sprintf(mmc->disk->disk_name, "nintendo3ds_mmc");
 
-    struxt pxi_cmd_hdr *size_cmd;
-    size_cmd.cmd = PXI_CMD_SDMMC_GET_SIZE;
-    size_cmd.size = 0;
+	size_cmd.cmd = PXI_CMD_SDMMC_GET_SIZE;
+	size_cmd.len = 0;
 
-    pxi_send_cmd(&size_cmd);
+	pxi_send_cmd(&size_cmd, 0 /* don't wait for response - we handle it in the irq */);
 
 	mmc->size = 0;
-    while(mmc->size == 0)
-        mmc->size = pxi_get_sdmmc_size();
+	while(mmc->size == 0)
+		mmc->size = pxi_get_sdmmc_size();
 
 	platform_set_drvdata(pdev, mmc);
 

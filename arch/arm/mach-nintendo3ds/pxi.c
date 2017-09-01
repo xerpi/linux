@@ -12,9 +12,18 @@
 #include <linux/mutex.h>
 #include <linux/interrupt.h>
 #include <linux/irqdomain.h>
+#include <linux/module.h>
+#include <linux/platform_device.h>
 #include <asm/io.h>
 #include <mach/platform.h>
 #include <mach/pxi.h>
+
+static int _pxi_is_active = 0;
+
+int pxi_is_active(void)
+{
+	return _pxi_is_active;
+}
 
 static u8 __iomem *pxi_base = NULL;
 static DEFINE_MUTEX(pxi_lock);
@@ -132,7 +141,7 @@ u32 pxi_get_sdmmc_size(void) {
 }
 EXPORT_SYMBOL(pxi_get_sdmmc_size);
 
-void pxi_send_cmd(struct pxi_cmd_hdr *cmd)
+void pxi_send_cmd(struct pxi_cmd_hdr *cmd, int wait)
 {
 	unsigned int i;
 
@@ -157,18 +166,19 @@ void pxi_send_cmd(struct pxi_cmd_hdr *cmd)
 	/*
 	 * Wait for the reply.
 	 */
-	do {
-		while (pxi_recv_fifo_is_empty())
-			;
-	} while (pxi_recv_fifo_pop() != cmd->cmd);
+	if(wait)
+	{
+		do {
+			while (pxi_recv_fifo_is_empty())
+				;
+		} while (pxi_recv_fifo_pop() != cmd->cmd);
+	}
 
 	mutex_unlock(&pxi_lock);
 }
 EXPORT_SYMBOL(pxi_send_cmd);
 
-
-
-static int __init pxi_init(void)
+static int nintendo3ds_pxi_probe(struct platform_device *pdev)
 {
 	unsigned int sync_hwirq;
 
@@ -205,16 +215,34 @@ static int __init pxi_init(void)
 		pxi_send_cmd((struct pxi_cmd_hdr *)&cmd);
 	}*/
 
+	_pxi_is_active = 1;
+
 	return 0;
 }
 
-/*static void pxi_deinit(void)
+static void nintendo3ds_pxi_deinit(void)
 {
-	if (pxi_base) {
+	/*if (pxi_base) {
 		iounmap(pxi_base);
 		release_mem_region(NINTENDO3DS_PXI_REGS_BASE,
 				   NINTENDO3DS_PXI_REGS_SIZE);
-	}
-}*/
+	}*/
+}
 
-subsys_initcall(pxi_init);
+
+static const struct of_device_id nintendo3ds_pxi_dt_ids[] = {
+        { .compatible = "nintendo3ds-pxi", },
+        {},
+};
+MODULE_DEVICE_TABLE(of, nintendo3ds_pxi_dt_ids);
+
+static struct platform_driver nintendo3ds_pxi_driver = {
+        .driver         = {
+                .name   = "nintendo3ds_pxi",
+                .owner = THIS_MODULE,
+                .of_match_table = nintendo3ds_pxi_dt_ids,
+        },
+        .remove         = __exit_p(nintendo3ds_pxi_deinit)
+};
+
+module_platform_driver_probe(nintendo3ds_pxi_driver, nintendo3ds_pxi_probe)
