@@ -188,7 +188,7 @@ static int nintendo3ds_pxi_probe(struct platform_device *pdev)
 
 	pxi_reset();
 
-	sync_hwirq = irq_find_mapping(NULL, PXI_HWIRQ_SYNC);
+	sync_hwirq = platform_get_irq(pdev, 0);
 
 	if (request_irq(sync_hwirq, sync_irq_handler, 0, "pxi_sync", NULL)) {
 		printk(KERN_ERR "Can't allocate irq (0x%02X): %d\n",

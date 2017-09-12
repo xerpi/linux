@@ -224,18 +224,13 @@
 		};
 	};
 
+	mmc0: mmc@0 {
+		compatible = "nintendo3ds-mmc";
+	};
+
 	pxi {
 		compatible = "nintendo3ds-pxi";
 		interrupts = <GIC_SPI 0x30 IRQ_TYPE_EDGE_RISING>;
 		interrupt-parent = <&gic>;
-
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		mmc0: mmc@0 {
-			compatible = "nintendo3ds-mmc";
-			reg = <0>;
-		};
-
 	};
 };
