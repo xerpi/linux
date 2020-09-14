@@ -1273,6 +1273,13 @@ config RTC_DRV_AB8500
 	  Select this to enable the ST-Ericsson AB8500 power management IC RTC
 	  support. This chip contains a battery- and capacitor-backed RTC.
 
+config RTC_DRV_NINTENDO3DS
+	tristate "Nintendo 3DS RTC driver"
+	depends on MFD_NINTENDO3DS_MCU
+	help
+	  If you say yes here you get support for the MCU RTC of the
+	  Nintendo 3DS.
+
 config RTC_DRV_OPAL
 	tristate "IBM OPAL RTC driver"
 	depends on PPC_POWERNV

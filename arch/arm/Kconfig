@@ -534,6 +534,23 @@ config ARCH_OMAP1
 	help
 	  Support for older TI OMAP1 (omap7xx, omap15xx or omap16xx)
 
+config ARCH_NINTENDO3DS
+	bool "Nintendo 3DS"
+	select ARM_GIC
+	select ARM_AMBA
+	select CPU_V6K
+	select HAVE_SMP
+	select HAVE_ARM_SCU
+	select HAVE_ARM_TWD
+	select GENERIC_IRQ_CHIP
+	select GENERIC_CLOCKEVENTS
+	select CLKDEV_LOOKUP
+	select COMMON_CLK
+	select USE_OF
+	select TIMER_OF
+	help
+	  Support for the Nintendo 3DS game console.
+
 endchoice
 
 menu "Multiple platform selection"
@@ -675,6 +692,8 @@ source "arch/arm/mach-mv78xx0/Kconfig"
 source "arch/arm/mach-mvebu/Kconfig"
 
 source "arch/arm/mach-mxs/Kconfig"
+
+source "arch/arm/mach-nintendo3ds/Kconfig"
 
 source "arch/arm/mach-nomadik/Kconfig"
 

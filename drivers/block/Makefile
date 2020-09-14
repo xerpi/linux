@@ -4,7 +4,7 @@
 #
 # 12 June 2000, Christoph Hellwig <hch@infradead.org>
 # Rewritten to use lists instead of if-statements.
-# 
+#
 
 # needed for trace events
 ccflags-y				+= -I$(src)
@@ -23,6 +23,7 @@ obj-$(CONFIG_XILINX_SYSACE)	+= xsysace.o
 obj-$(CONFIG_CDROM_PKTCDVD)	+= pktcdvd.o
 obj-$(CONFIG_SUNVDC)		+= sunvdc.o
 obj-$(CONFIG_BLK_DEV_SKD)	+= skd.o
+obj-$(CONFIG_BLK_DEV_NINTENDO3DS_MMC)	+= nintendo3ds_mmc.o
 
 obj-$(CONFIG_BLK_DEV_UMEM)	+= umem.o
 obj-$(CONFIG_BLK_DEV_NBD)	+= nbd.o

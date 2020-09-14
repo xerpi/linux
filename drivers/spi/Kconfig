@@ -482,6 +482,12 @@ config SPI_MTK_NOR
 	  SPI interface as well as several SPI NOR specific instructions
 	  via SPI MEM interface.
 
+config SPI_NINTENDO3DS
+	tristate "Nintendo 3DS SPI"
+	depends on ARCH_NINTENDO3DS
+	help
+	  SPI driver for the Nintendo 3DS
+
 config SPI_NPCM_FIU
 	tristate "Nuvoton NPCM FLASH Interface Unit"
 	depends on ARCH_NPCM || COMPILE_TEST

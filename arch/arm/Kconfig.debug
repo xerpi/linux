@@ -1475,6 +1475,13 @@ choice
 		  options; the platform specific options are deprecated
 		  and will be soon removed.
 
+	config DEBUG_LL_NINTENDO3DS_ARM9_FW
+		bool "Kernel low-level debugging on Nintendo 3DS using ARM9 FW"
+		depends on ARCH_NINTENDO3DS
+		help
+		  Say Y here if you want the debug print routines to direct
+		  their output to the ARM9 FW running on the Nintendo 3DS platform.
+
 endchoice
 
 config DEBUG_AT91_UART
@@ -1602,6 +1609,7 @@ config DEBUG_LL_INCLUDE
 	default "debug/bcm63xx.S" if DEBUG_BCM63XX_UART
 	default "debug/digicolor.S" if DEBUG_DIGICOLOR_UA0
 	default "debug/brcmstb.S" if DEBUG_BRCMSTB_UART
+	default "debug/nintendo3ds_arm9_fw.S" if DEBUG_LL_NINTENDO3DS_ARM9_FW
 	default "mach/debug-macro.S"
 
 # Compatibility options for PL01x
@@ -1913,7 +1921,7 @@ config DEBUG_UNCOMPRESS
 	  When this option is set, the selected DEBUG_LL output method
 	  will be re-used for normal decompressor output on multiplatform
 	  kernels.
-	  
+
 
 config UNCOMPRESS_INCLUDE
 	string

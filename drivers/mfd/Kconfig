@@ -507,6 +507,13 @@ config MFD_HI655X_PMIC
 	help
 	  Select this option to enable Hisilicon hi655x series pmic driver.
 
+config MFD_NINTENDO3DS_MCU
+	tristate "Nintendo 3DS MCU"
+	depends on ARCH_NINTENDO3DS
+	select MFD_CORE
+	help
+	  Enable support for Nintendo 3DS MCU.
+
 config HTC_PASIC3
 	tristate "HTC PASIC3 LED/DS1WM chip support"
 	select MFD_CORE
