@@ -141,6 +141,12 @@ config POWER_RESET_OXNAS
 	help
 	  Restart support for OXNAS/PLXTECH OX820 SoC.
 
+config POWER_RESET_NINTENDO3DS
+	bool "Nintendo 3DS power-off driver"
+	depends on ARCH_NINTENDO3DS
+	help
+	  Power off and restart support for the Nintendo 3DS.
+
 config POWER_RESET_PIIX4_POWEROFF
 	tristate "Intel PIIX4 power-off driver"
 	depends on PCI
