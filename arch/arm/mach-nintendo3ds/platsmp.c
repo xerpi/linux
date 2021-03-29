@@ -27,7 +27,6 @@
  */
 
 #define SECONDARY_STARTUP_ADDR	0x1FFFFFDC
-#define SCU_BASE_ADDR		0x17E00000
 
 extern void smp_cross_call(const struct cpumask *target, unsigned int ipinr);
 
@@ -43,12 +42,16 @@ static int nintendo3ds_smp_boot_secondary(unsigned int cpu,
 
 static void nintendo3ds_smp_prepare_cpus(unsigned int max_cpus)
 {
+	struct device_node *np;
 	void __iomem *scu_base;
 	void __iomem *boot_addr;
 
-	scu_base = ioremap(SCU_BASE_ADDR, SZ_256);
-	scu_enable(scu_base);
-	iounmap(scu_base);
+	np = of_find_compatible_node(NULL, NULL, "arm,arm11mp-scu");
+	if (np) {
+		scu_base = of_iomap(np, 0);
+		scu_enable(scu_base);
+		of_node_put(np);
+	}
 
 	boot_addr = ioremap((phys_addr_t)SECONDARY_STARTUP_ADDR,
 			       sizeof(phys_addr_t));
